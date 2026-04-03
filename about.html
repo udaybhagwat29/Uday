@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
-  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Eazy ITR","description":"CA-assisted ITR filing and tax compliance services across Mumbai and India","areaServed":"India","priceRange":"₹999","telephone":"+919270267331","email":"eazyitr1@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Mumbai","addressCountry":"IN"}}</script>
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Eazy ITR","description":"CA-assisted ITR filing and tax compliance services across Mumbai and India","areaServed":"India","priceRange":"₹499","telephone":"+919270267331","email":"eazyitr1@gmail.com","address":{"@type":"PostalAddress","addressLocality":"Mumbai","addressCountry":"IN"}}</script>
 </head>
 <body class="page-about">
 
@@ -34,6 +34,16 @@ const CONFIG = {
 };
 </script>
 
+<!-- ═══ STICKY OFFER BANNER ═══ -->
+<div class="offer-banner" id="offerBanner">
+  <div class="ob-inner">
+    <span class="ob-fire">🔥</span>
+    <span class="ob-text">File ITR @ <strong>₹499</strong> – <em>Today Only!</em> Offer expires in <span class="ob-countdown" id="bannerCountdown">--:--:--</span></span>
+    <a href="#contact" class="ob-cta">File Now →</a>
+    <button class="ob-close" id="obClose" aria-label="Close">✕</button>
+  </div>
+</div>
+
 <!-- MOBILE NAV -->
 <div class="mobile-nav-overlay" id="mobileNavOverlay">
   <div class="mobile-nav-panel">
@@ -46,7 +56,7 @@ const CONFIG = {
     <div class="mnav-div"></div>
     <a href="https://wa.me/919270267331" class="mnav-link green">💬 WhatsApp Us</a>
     <a href="tel:9270267331" class="mnav-link green">📞 Call Now</a>
-    <a href="#contact" class="mnav-cta">⚡ File ITR Now @ ₹999</a>
+    <a href="#contact" class="mnav-cta">💳 Pay ₹499 &amp; File Instantly</a>
   </div>
 </div>
 
@@ -61,13 +71,21 @@ const CONFIG = {
       <a href="index.html" class="nav-link">Services</a>
       <a href="about.html" class="nav-link active">About Us</a>
       <a href="tel:9270267331" class="nav-phone">📞 9270267331</a>
-      <a href="#contact" class="nav-cta pulse-btn">⚡ File ITR — ₹999</a>
+      <a href="https://wa.me/919270267331" class="nav-wa-btn">💬 WhatsApp CA</a>
+      <a href="#contact" class="nav-cta pulse-btn">💳 Pay ₹499 — File Now</a>
     </nav>
     <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
   </div>
 </header>
+
+<!-- URGENCY TOPBAR -->
+<div class="urgency-topbar">
+  <span class="ut-dot"></span>
+  <span id="urgencyTopText">⏰ Filing deadline approaching — <strong>avoid ₹5,000 late penalty!</strong> &nbsp;·&nbsp; <span id="filedTodayTop"></span> people filed today</span>
+  <a href="#contact" class="ut-cta">File Now →</a>
+</div>
 
 <!-- PAGE HERO -->
 <section class="page-hero">
@@ -76,12 +94,25 @@ const CONFIG = {
     <p class="eyebrow" style="color:var(--blue-400)">Our Story</p>
     <h1 class="page-hero-h1" id="overviewTitle"></h1>
     <p class="page-hero-sub">Simplifying tax compliance for every Indian — one filing at a time.</p>
+
+    <div class="trust-badges-row trust-badges-dark">
+      <div class="trust-badge trust-badge-dark"><span>🏛️</span> Govt Compliant</div>
+      <div class="trust-badge trust-badge-dark"><span>📜</span> CA Certified</div>
+      <div class="trust-badge trust-badge-dark"><span>🔒</span> SSL Secure</div>
+      <div class="trust-badge trust-badge-dark"><span>🛡️</span> 100% Accuracy Guarantee</div>
+    </div>
+
     <div class="page-hero-urgency">
       <span>⏰</span><span>Filing deadline approaching — <strong>avoid ₹5,000 penalty!</strong></span>
     </div>
+    <!-- Countdown in about hero -->
+    <div class="about-countdown-wrap">
+      <span class="acd-label">Today's ₹499 offer expires in:</span>
+      <div class="about-countdown" id="aboutCountdown">--:--:--</div>
+    </div>
     <div class="page-hero-ctas">
-      <a href="#contact" class="btn-primary btn-lg pulse-btn">⚡ File ITR Now @ ₹999</a>
-      <a href="https://wa.me/919270267331" class="btn-wa btn-lg">💬 Talk to CA</a>
+      <a href="https://wa.me/919270267331?text=Hi%2C%20I%20want%20to%20file%20my%20ITR%20at%20%E2%82%B9499.%20Please%20help." class="btn-wa btn-lg">💬 WhatsApp CA — Free Consult</a>
+      <a href="#contact" class="btn-primary btn-lg pulse-btn">💳 Pay ₹499 &amp; File Instantly</a>
     </div>
   </div>
 </section>
@@ -96,67 +127,65 @@ const CONFIG = {
     <div class="stat-item" id="stat3"></div>
     <div class="stat-sep"></div>
     <div class="stat-item">
-      <span class="stat-val">₹999</span>
-      <span class="stat-lbl">Starting Price</span>
+      <span class="stat-val">₹499</span>
+      <span class="stat-lbl">Today's Price</span>
     </div>
   </div>
 </div>
 
-<!-- ABOUT CONTENT -->
+<!-- RISK REVERSAL BANNER -->
+<div class="risk-banner">
+  <div class="risk-inner">
+    <div class="risk-item"><span>🛡️</span><div><strong>100% Accuracy Guarantee</strong><span>Error? We re-file FREE</span></div></div>
+    <div class="risk-sep"></div>
+    <div class="risk-item"><span>🔒</span><div><strong>Bank-grade Security</strong><span>Your data is encrypted</span></div></div>
+    <div class="risk-sep"></div>
+    <div class="risk-item"><span>💸</span><div><strong>No Hidden Charges</strong><span>Pay only ₹499, that's it</span></div></div>
+    <div class="risk-sep"></div>
+    <div class="risk-item"><span>⚡</span><div><strong>24–48 Hour Delivery</strong><span>Fastest in Mumbai</span></div></div>
+  </div>
+</div>
+
+<!-- ABOUT OVERVIEW -->
 <section class="about-section">
-  <div class="section-inner">
-    <div class="about-grid">
-
-      <!-- Company Overview -->
-      <div class="about-block">
-        <p class="eyebrow">Who We Are</p>
-        <h2 class="about-h2">Built for India's Taxpayers</h2>
-        <div class="about-body" id="overviewText"></div>
-        <ul class="about-highlights">
-          <li><span>✅</span> <strong>ITR Filing in Mumbai</strong> — Fast, CA-verified, PAN India</li>
-          <li><span>✅</span> <strong>GST Return Filing</strong> &amp; Registration support</li>
-          <li><span>✅</span> <strong>Bookkeeping &amp; Accounting</strong> for all business sizes</li>
-          <li><span>✅</span> Trusted by <strong>5000+ clients</strong> across Maharashtra &amp; India</li>
-        </ul>
-        <a href="https://wa.me/919270267331" class="wa-inline">💬 Chat with our team →</a>
-      </div>
-
-      <!-- Mission -->
-      <div class="mission-card">
-        <div class="mission-icon">🎯</div>
-        <p class="eyebrow">Our Mission</p>
-        <blockquote class="mission-quote" id="missionText"></blockquote>
-        <div class="mission-trust">
-          <span>🏛️ Govt Compliant</span>
-          <span>🔒 100% Secure</span>
-          <span>📜 CA Assisted</span>
-        </div>
-      </div>
-
+  <div class="section-inner about-grid">
+    <div class="about-text fade-in">
+      <p class="eyebrow">Who We Are</p>
+      <h2 class="section-title" id="overviewTitle2">Mumbai's Trusted Tax Partner</h2>
+      <div id="overviewText" class="about-paras"></div>
+      <h3 class="mission-label">Our Mission</h3>
+      <p id="missionText" class="mission-text"></p>
     </div>
-
-    <!-- Founder -->
-    <div class="founder-card">
+    <div class="founder-card fade-in">
       <div class="founder-left">
-        <div class="founder-av"><span id="founderInitial"></span></div>
-        <div class="founder-badge">Tax &amp; GST Expert</div>
-      </div>
-      <div class="founder-right">
-        <p class="eyebrow">Meet the Founder</p>
-        <h3 class="founder-name" id="founderName"></h3>
-        <p class="founder-title" id="founderTitle"></p>
-        <div class="founder-bio" id="founderBio"></div>
-        <div class="founder-creds">
-          <span>🏆 Tax &amp; GST Expert</span>
-          <span>📊 Extensive Experience</span>
-          <span>✅ 5000+ Clients</span>
-          <span>🇮🇳 PAN India Service</span>
+        <div class="founder-av" id="founderInitial"></div>
+        <div>
+          <strong id="founderName" class="founder-name"></strong>
+          <span id="founderTitle" class="founder-title"></span>
         </div>
       </div>
+      <div id="founderBio" class="founder-bio"></div>
+      <div class="founder-cta-row">
+        <a href="https://wa.me/919270267331" class="btn-wa">💬 Connect on WhatsApp</a>
+        <a href="#contact" class="btn-primary">📋 Get Started</a>
+      </div>
     </div>
+  </div>
+</section>
 
-    <!-- Contact Details -->
+<!-- CONTACT DETAILS -->
+<section class="contact-details-section">
+  <div class="section-inner">
+    <p class="eyebrow" style="text-align:center">Reach Us Directly</p>
+    <h2 class="section-title" style="text-align:center;margin-bottom:2rem">We're Here to <em>Help You</em></h2>
     <div class="contact-details-row">
+      <div class="cd-item">
+        <span class="cd-icon">📍</span>
+        <div>
+          <p class="cd-lbl">Location</p>
+          <p class="cd-val">Mumbai, Maharashtra · PAN India Service</p>
+        </div>
+      </div>
       <div class="cd-item">
         <span class="cd-icon">📞</span>
         <div>
@@ -172,41 +201,61 @@ const CONFIG = {
         </div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- CONTACT FORM -->
+<!-- CONTACT FORM — WhatsApp First -->
 <section class="contact-section" id="contact">
   <div class="contact-inner">
     <div class="contact-left">
-      <p class="eyebrow" style="color:var(--blue-400)">Get Started</p>
-      <h2 class="contact-h2">File Your ITR <em>Today @ ₹999</em></h2>
-      <p class="contact-sub">Share your details and our CA team will file your return within 24–48 hours. Fast, secure, affordable.</p>
+      <p class="eyebrow" style="color:var(--blue-400)">Get Started in 2 Minutes</p>
+      <h2 class="contact-h2">File Your ITR <em>Today — ₹499 Only</em></h2>
+      <p class="contact-sub">Fastest way: WhatsApp our CA directly. Or fill the form — we call back within 2 hours.</p>
+
+      <!-- Pricing anchoring in contact -->
+      <div class="contact-price-anchor">
+        <span class="cpa-orig">Regular Price: ₹1,999</span>
+        <span class="cpa-now">Today Only: ₹499</span>
+        <span class="cpa-save">You Save ₹1,500!</span>
+      </div>
+
+      <a href="https://wa.me/919270267331?text=Hi%2C%20I%20want%20to%20file%20my%20ITR%20at%20%E2%82%B9499.%20Please%20help." class="wa-primary-block">
+        <div class="wa-primary-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <div class="wa-primary-text">
+          <strong>💬 Start on WhatsApp — Fastest</strong>
+          <span>Our CA replies within minutes · Free consultation</span>
+        </div>
+        <div class="wa-primary-arrow">→</div>
+      </a>
+
+      <div class="contact-divider"><span>or fill the form below</span></div>
+
       <div class="contact-benefits">
-        <div class="cb">✅ CA-verified filing</div>
-        <div class="cb">✅ ITR-V acknowledgement</div>
-        <div class="cb">✅ No hidden charges</div>
-        <div class="cb">✅ Max deductions claimed</div>
+        <div class="cb">✅ CA-verified filing in 24–48 hrs</div>
+        <div class="cb">✅ ITR-V acknowledgement emailed</div>
+        <div class="cb">✅ No hidden charges — just ₹499 today</div>
+        <div class="cb">✅ Maximum deductions claimed</div>
+        <div class="cb">🛡️ 100% Accuracy Guarantee</div>
       </div>
       <div class="contact-urgency">
-        <span>⚠️</span><span>Limited offer — File before deadline to save ₹5,000 penalty!</span>
+        <span>⚠️</span><span>Today only offer — File before midnight to lock ₹499 price!</span>
       </div>
-      <a href="https://wa.me/919270267331" class="wa-cta-block">💬 Prefer WhatsApp? Chat Now →</a>
     </div>
 
     <div class="contact-right">
       <div class="form-success" id="formSuccess">
         <div class="success-icon">✓</div>
         <h3>Message Received!</h3>
-        <p>Our CA team will contact you within one business day.</p>
-        <a href="https://wa.me/919270267331" class="btn-wa" style="margin-top:1.25rem;">💬 WhatsApp for Faster Response</a>
+        <p>Our CA will contact you within 2 hours. For fastest response —</p>
+        <a href="https://wa.me/919270267331?text=Hi%2C%20I%20just%20submitted%20the%20form.%20Please%20help%20me%20file%20ITR." class="btn-wa" style="margin-top:1.25rem;">💬 WhatsApp for Instant Help</a>
       </div>
 
       <form class="contact-form" id="contactForm" novalidate>
         <div class="form-header">
-          <h3>Send Us a Message</h3>
-          <p>We'll get back to you within 2 hours</p>
+          <h3>📋 Send Details — CA Calls Back</h3>
+          <p>We'll get back to you within <strong>2 hours</strong></p>
         </div>
         <div class="form-row">
           <div class="fg">
@@ -221,7 +270,7 @@ const CONFIG = {
           </div>
         </div>
         <div class="fg">
-          <label for="fphone">Phone / WhatsApp</label>
+          <label for="fphone">Phone / WhatsApp <span class="req">*</span></label>
           <input type="tel" id="fphone" name="phone" placeholder="+91 92702 67331" autocomplete="tel" />
           <span class="ferr" id="err-phone"></span>
         </div>
@@ -229,12 +278,14 @@ const CONFIG = {
           <label for="fservice">Service Required</label>
           <select id="fservice" name="service">
             <option value="">Select a service…</option>
-            <option>ITR Filing – Salaried</option>
+            <option>ITR Filing – Salaried (₹499 Today)</option>
             <option>ITR Filing – Business</option>
             <option>GST Registration</option>
             <option>GST Return Filing</option>
             <option>Tax Planning</option>
             <option>TDS Return Filing</option>
+            <option>Bundle: ITR + Consultation</option>
+            <option>Bundle: GST + Accounting</option>
             <option>Other</option>
           </select>
         </div>
@@ -243,8 +294,8 @@ const CONFIG = {
           <textarea id="fmessage" name="message" rows="3" placeholder="Tell us about your requirements…"></textarea>
           <span class="ferr" id="err-message"></span>
         </div>
-        <button type="submit" class="btn-primary btn-full">Send Message → Get CA Callback</button>
-        <p class="form-note">🔒 Your data is 100% secure &amp; never shared</p>
+        <button type="submit" class="btn-primary btn-full pulse-btn">💳 Send Details — CA Will Call Back</button>
+        <p class="form-note">🔒 Your data is 100% secure &amp; never shared · 🛡️ 100% Accuracy Guarantee</p>
       </form>
     </div>
   </div>
@@ -270,16 +321,50 @@ const CONFIG = {
   </div>
 </footer>
 
-<!-- STICKY CTA -->
+<!-- STICKY CTA BAR -->
 <div class="sticky-cta">
   <a href="tel:9270267331" class="scta-call">📞 Call</a>
-  <a href="https://wa.me/919270267331" class="scta-wa">
+  <a href="https://wa.me/919270267331?text=Hi%2C%20I%20want%20to%20file%20my%20ITR.%20Please%20help." class="scta-wa">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-    WhatsApp
+    WhatsApp CA
   </a>
-  <a href="#contact" class="scta-file">⚡ File Now</a>
+  <a href="#contact" class="scta-file">💳 Pay ₹499</a>
 </div>
 
-<script src="script.js" defer></script>
+<!-- FLOATING CTA BUTTON -->
+<a href="#contact" class="floating-cta" id="floatingCta" aria-label="File My ITR Now">
+  <span class="fcta-icon">⚡</span>
+  <span class="fcta-text">File My ITR Now</span>
+</a>
+
+<!-- SOCIAL PROOF POPUP -->
+<div class="sp-popup" id="spPopup" aria-live="polite">
+  <div class="sp-avatar" id="spAvatar">R</div>
+  <div class="sp-content">
+    <strong id="spName">Rohit from Mumbai</strong>
+    <span id="spAction">just filed their ITR ✅</span>
+  </div>
+  <button class="sp-close" id="spClose" aria-label="Close">✕</button>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div class="exit-overlay" id="exitOverlay">
+  <div class="exit-modal" id="exitModal">
+    <button class="exit-close" id="exitClose" aria-label="Close">✕</button>
+    <div class="exit-emoji">⚠️</div>
+    <h2 class="exit-h2">Wait! Don't Miss This Deal</h2>
+    <p class="exit-sub">Get <strong>₹100 OFF</strong> if you file your ITR in the next</p>
+    <div class="exit-countdown" id="exitCountdown">10:00</div>
+    <div class="exit-price-row">
+      <span class="exit-orig">₹599</span>
+      <span class="exit-now">₹499 Only</span>
+    </div>
+    <a href="#contact" class="btn-primary btn-full exit-cta pulse-btn" id="exitCta">✅ Claim ₹100 OFF — File Now</a>
+    <a href="https://wa.me/919270267331?text=Hi%2C%20I%20want%20to%20claim%20the%20%E2%82%B9100%20off%20offer." class="btn-wa btn-full" style="margin-top:.6rem;">💬 Claim via WhatsApp</a>
+    <p class="exit-note" id="exitDecline">No thanks, I'll pay full price later →</p>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

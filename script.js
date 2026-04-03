@@ -1,7 +1,9 @@
 "use strict";
 /* ================================================================
-   EAZY ITR — script.js (Conversion Redesign 2025)
-   Formspree endpoint — replace YOUR_ID with your actual form ID
+   EAZY ITR — script.js (CRO Optimized 2025 — Full Upgrade)
+   Features: Countdown timers, Social proof, Exit intent,
+             Offer banner, Floating CTA, Bundle section
+   Formspree endpoint
    ================================================================ */
 
 const FORMSPREE_URL = 'https://formspree.io/f/xykbngzo';
@@ -14,7 +16,7 @@ const setText = (id, t) => { const el = $(id); if (el) el.textContent = t; };
 const setHTML = (id, h) => { const el = $(id); if (el) el.innerHTML = h; };
 
 /* ---------------------------------------------------------------
-   1. SHARED — footer, etc.
+   1. SHARED — footer copyright
    --------------------------------------------------------------- */
 function initShared() {
   if (typeof CONFIG === 'undefined') return;
@@ -31,8 +33,8 @@ function initMobileNav() {
   const closeBtn  = $('mobileNavClose');
   if (!hamburger || !overlay) return;
 
-  const open = () => { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; hamburger.setAttribute('aria-expanded','true'); };
-  const close = () => { overlay.classList.remove('active'); document.body.style.overflow = ''; hamburger.setAttribute('aria-expanded','false'); };
+  const open  = () => { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; hamburger.setAttribute('aria-expanded', 'true'); };
+  const close = () => { overlay.classList.remove('active'); document.body.style.overflow = ''; hamburger.setAttribute('aria-expanded', 'false'); };
 
   hamburger.addEventListener('click', open);
   if (closeBtn) closeBtn.addEventListener('click', close);
@@ -52,7 +54,93 @@ function initHeaderScroll() {
 }
 
 /* ---------------------------------------------------------------
-   4. HOME PAGE — service cards (top 6 visible, rest hidden)
+   4. COUNTDOWN TIMERS — Daily reset at midnight
+   --------------------------------------------------------------- */
+
+/** Returns seconds remaining until midnight */
+function getSecondsUntilMidnight() {
+  const now = new Date();
+  const midnight = new Date(now);
+  midnight.setHours(23, 59, 59, 999);
+  return Math.max(0, Math.floor((midnight - now) / 1000));
+}
+
+/** Formats seconds → HH:MM:SS */
+function formatHMS(totalSeconds) {
+  const h = Math.floor(totalSeconds / 3600);
+  const m = Math.floor((totalSeconds % 3600) / 60);
+  const s = totalSeconds % 60;
+  return [h, m, s].map(v => String(v).padStart(2, '0')).join(':');
+}
+
+function initCountdownTimers() {
+  // IDs of all daily countdown elements
+  const dailyTimerIds = ['bannerCountdown', 'heroCountdown', 'pricingCountdown', 'aboutCountdown'];
+
+  let remaining = getSecondsUntilMidnight();
+
+  function tick() {
+    const display = formatHMS(remaining);
+    dailyTimerIds.forEach(id => {
+      const el = $(id);
+      if (el) el.textContent = display;
+    });
+    if (remaining > 0) {
+      remaining--;
+    } else {
+      // Reset to full day at midnight
+      remaining = 86399;
+    }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+}
+
+/* ---------------------------------------------------------------
+   5. DYNAMIC URGENCY — filed today count
+   --------------------------------------------------------------- */
+function initDynamicUrgency() {
+  const today = new Date();
+  const seed = today.getDate() + today.getMonth() * 31 + today.getFullYear();
+  const pseudo = (seed * 9301 + 49297) % 233280;
+  const filedCount = 18 + (pseudo % 28); // 18–45 range
+
+  const els = document.querySelectorAll('#filedTodayTop, #filedTodayCard');
+  els.forEach(el => { if (el) el.textContent = `${filedCount}`; });
+}
+
+/* ---------------------------------------------------------------
+   6. OFFER BANNER — close button
+   --------------------------------------------------------------- */
+function initOfferBanner() {
+  const banner  = $('offerBanner');
+  const closeBtn = $('obClose');
+  if (!banner || !closeBtn) return;
+
+  // Check if dismissed today
+  const dismissed = sessionStorage.getItem('bannerDismissed');
+  if (dismissed) {
+    banner.style.display = 'none';
+    return;
+  }
+
+  closeBtn.addEventListener('click', () => {
+    banner.style.maxHeight = banner.offsetHeight + 'px';
+    banner.style.overflow = 'hidden';
+    banner.style.transition = 'max-height .35s ease, opacity .35s ease, padding .35s ease';
+    requestAnimationFrame(() => {
+      banner.style.maxHeight = '0';
+      banner.style.opacity = '0';
+      banner.style.padding = '0';
+    });
+    setTimeout(() => { banner.style.display = 'none'; }, 380);
+    sessionStorage.setItem('bannerDismissed', '1');
+  });
+}
+
+/* ---------------------------------------------------------------
+   7. HOME PAGE — service cards
    --------------------------------------------------------------- */
 function initHomePage() {
   const grid      = $('servicesGrid');
@@ -69,6 +157,7 @@ function initHomePage() {
     card.setAttribute('role', 'listitem');
 
     const benefits = (svc.benefits || []).map(b => `<li>✔ ${b}</li>`).join('');
+    const waMsg = encodeURIComponent(`Hi, I'm interested in ${svc.title}. Please help.`);
     card.innerHTML = `
       <div class="svc-icon">${svc.icon || '📄'}</div>
       <span class="badge-fast">⚡ 24–48 Hours</span>
@@ -77,7 +166,10 @@ function initHomePage() {
       <ul class="card-benefits">${benefits}</ul>
       <div class="card-footer">
         <span class="card-price">${svc.price}</span>
-        <a href="about.html#contact" class="btn-primary">Pay Now →</a>
+        <div class="card-cta-group">
+          <a href="https://wa.me/919270267331?text=${waMsg}" class="btn-card-wa">💬 Ask CA</a>
+          <a href="about.html#contact" class="btn-primary">Pay Now →</a>
+        </div>
       </div>`;
 
     if (i < TOP) {
@@ -111,13 +203,14 @@ function initHomePage() {
 }
 
 /* ---------------------------------------------------------------
-   5. ABOUT PAGE — stats, founder, contact
+   8. ABOUT PAGE — stats, founder, contact details
    --------------------------------------------------------------- */
 function initAboutPage() {
   const a = CONFIG?.about;
   if (!a) return;
 
-  setText('overviewTitle', a.overviewTitle);
+  // Set title both instances
+  ['overviewTitle', 'overviewTitle2'].forEach(id => setText(id, a.overviewTitle));
 
   // Stats
   [
@@ -162,7 +255,6 @@ function initAboutPage() {
 
   const dp = $('detailPhone');
   if (dp) dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none">${CONFIG.phone}</a>`;
-
   const de = $('detailEmail');
   if (de) de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none">${CONFIG.email}</a>`;
 
@@ -170,7 +262,7 @@ function initAboutPage() {
 }
 
 /* ---------------------------------------------------------------
-   6. COUNT-UP ANIMATION
+   9. COUNT-UP ANIMATION
    --------------------------------------------------------------- */
 function initCountUp() {
   const els = document.querySelectorAll('[data-target]');
@@ -197,7 +289,7 @@ function initCountUp() {
 }
 
 /* ---------------------------------------------------------------
-   7. FADE-IN ON SCROLL
+   10. FADE-IN ON SCROLL
    --------------------------------------------------------------- */
 function initFadeIn() {
   const els = document.querySelectorAll('.fade-in:not(.visible)');
@@ -215,7 +307,7 @@ function initFadeIn() {
 }
 
 /* ---------------------------------------------------------------
-   8. FAQ ACCORDION
+   11. FAQ ACCORDION
    --------------------------------------------------------------- */
 function initFAQ() {
   document.querySelectorAll('.faq-item').forEach(item => {
@@ -225,7 +317,6 @@ function initFAQ() {
 
     btn.addEventListener('click', () => {
       const isOpen = btn.getAttribute('aria-expanded') === 'true';
-      // Close all
       document.querySelectorAll('.faq-q').forEach(b => {
         b.setAttribute('aria-expanded', 'false');
         const a = b.closest('.faq-item')?.querySelector('.faq-a');
@@ -240,7 +331,7 @@ function initFAQ() {
 }
 
 /* ---------------------------------------------------------------
-   9. CONTACT FORM → FORMSPREE
+   12. CONTACT FORM → FORMSPREE
    --------------------------------------------------------------- */
 function initContactForm() {
   const form    = $('contactForm');
@@ -258,7 +349,7 @@ function initContactForm() {
     },
     phone: {
       el: $('fphone'), err: $('err-phone'),
-      validate: v => v.trim() && !/^[\d\s+\-()]{7,20}$/.test(v) ? 'Enter a valid phone number.' : ''
+      validate: v => !v.trim() ? 'Please enter your phone number.' : !/^[\d\s+\-()]{7,20}$/.test(v) ? 'Enter a valid phone number.' : ''
     },
     message: {
       el: $('fmessage'), err: $('err-message'),
@@ -266,7 +357,6 @@ function initContactForm() {
     }
   };
 
-  // Live validation on blur/input
   Object.values(fields).forEach(({ el, err, validate }) => {
     if (!el) return;
     el.addEventListener('blur', () => {
@@ -333,14 +423,180 @@ function initContactForm() {
 }
 
 /* ---------------------------------------------------------------
+   13. SOCIAL PROOF POPUP (NEW)
+   --------------------------------------------------------------- */
+const SOCIAL_PROOF_DATA = [
+  { name: 'Rohit', city: 'Mumbai',     initial: 'R', action: 'just filed their ITR ✅' },
+  { name: 'Priya', city: 'Pune',       initial: 'P', action: 'just paid for ITR filing 💳' },
+  { name: 'Amit',  city: 'Delhi',      initial: 'A', action: 'just got their ITR filed ✅' },
+  { name: 'Sneha', city: 'Bangalore',  initial: 'S', action: 'just saved ₹12,000 in taxes 🎉' },
+  { name: 'Raj',   city: 'Hyderabad',  initial: 'R', action: 'just filed GST returns 📊' },
+  { name: 'Meera', city: 'Chennai',    initial: 'M', action: 'just filed their ITR ✅' },
+  { name: 'Kiran', city: 'Ahmedabad',  initial: 'K', action: 'just registered for GST 📋' },
+  { name: 'Deepa', city: 'Kolkata',    initial: 'D', action: 'just got ITR acknowledgement ✅' },
+  { name: 'Vikas', city: 'Jaipur',     initial: 'V', action: 'just saved ₹8,500 in taxes 💰' },
+  { name: 'Anita', city: 'Nagpur',     initial: 'A', action: 'just filed business ITR 🏢' },
+];
+
+function initSocialProof() {
+  const popup    = $('spPopup');
+  const spName   = $('spName');
+  const spAction = $('spAction');
+  const spAvatar = $('spAvatar');
+  const spClose  = $('spClose');
+  if (!popup) return;
+
+  let idx = 0;
+  let hideTimer = null;
+
+  function showPopup() {
+    const person = SOCIAL_PROOF_DATA[idx % SOCIAL_PROOF_DATA.length];
+    idx++;
+
+    if (spName)   spName.textContent   = `${person.name} from ${person.city}`;
+    if (spAction) spAction.textContent = person.action;
+    if (spAvatar) spAvatar.textContent = person.initial;
+
+    popup.classList.add('visible');
+
+    // Auto-hide after 5 seconds
+    clearTimeout(hideTimer);
+    hideTimer = setTimeout(() => popup.classList.remove('visible'), 5000);
+  }
+
+  // Close button
+  if (spClose) {
+    spClose.addEventListener('click', () => {
+      clearTimeout(hideTimer);
+      popup.classList.remove('visible');
+    });
+  }
+
+  // Initial delay then every 12–20 seconds
+  setTimeout(() => {
+    showPopup();
+    setInterval(showPopup, 14000 + Math.random() * 6000);
+  }, 8000);
+}
+
+/* ---------------------------------------------------------------
+   14. EXIT INTENT POPUP (NEW)
+   --------------------------------------------------------------- */
+function initExitIntent() {
+  const overlay  = $('exitOverlay');
+  const closeBtn = $('exitClose');
+  const decline  = $('exitDecline');
+  const ctaLink  = $('exitCta');
+  if (!overlay) return;
+
+  let shown = false;
+  let exitTimerInterval = null;
+
+  function showExitPopup() {
+    if (shown) return;
+    shown = true;
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    startExitCountdown();
+  }
+
+  function hideExitPopup() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    clearInterval(exitTimerInterval);
+  }
+
+  // Exit countdown — 10 minutes
+  function startExitCountdown() {
+    let seconds = 10 * 60;
+    const el = $('exitCountdown');
+
+    function tick() {
+      if (!el) return;
+      const m = Math.floor(seconds / 60);
+      const s = seconds % 60;
+      el.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      if (seconds <= 0) {
+        clearInterval(exitTimerInterval);
+        el.textContent = 'EXPIRED';
+        el.style.color = '#6b7280';
+      } else {
+        seconds--;
+      }
+    }
+
+    tick();
+    exitTimerInterval = setInterval(tick, 1000);
+  }
+
+  // Mouse leave from top 20% of page
+  document.addEventListener('mouseleave', e => {
+    if (e.clientY < window.innerHeight * 0.08) {
+      // Small delay to avoid false triggers
+      setTimeout(showExitPopup, 300);
+    }
+  });
+
+  // Close handlers
+  if (closeBtn) closeBtn.addEventListener('click', hideExitPopup);
+  if (decline)  decline.addEventListener('click', hideExitPopup);
+  if (ctaLink)  ctaLink.addEventListener('click', hideExitPopup);
+  overlay.addEventListener('click', e => { if (e.target === overlay) hideExitPopup(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('active')) hideExitPopup(); });
+
+  // Mobile: show after 90s of inactivity
+  let mobileTimer = null;
+  function resetMobileTimer() {
+    clearTimeout(mobileTimer);
+    mobileTimer = setTimeout(showExitPopup, 90000);
+  }
+  if ('ontouchstart' in window) {
+    ['touchstart', 'scroll'].forEach(ev => window.addEventListener(ev, resetMobileTimer, { passive: true }));
+    resetMobileTimer();
+  }
+}
+
+/* ---------------------------------------------------------------
+   15. FLOATING CTA — show after scroll
+   --------------------------------------------------------------- */
+function initFloatingCta() {
+  const btn = $('floatingCta');
+  if (!btn) return;
+
+  // Always visible on mobile, show after 300px scroll on desktop
+  function toggleVisibility() {
+    if (window.innerWidth <= 768) {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'all';
+    } else {
+      const visible = window.scrollY > 300;
+      btn.style.opacity = visible ? '1' : '0';
+      btn.style.pointerEvents = visible ? 'all' : 'none';
+    }
+  }
+
+  btn.style.transition = 'opacity .3s ease';
+  btn.style.opacity = '0';
+  window.addEventListener('scroll', toggleVisibility, { passive: true });
+  toggleVisibility();
+}
+
+/* ---------------------------------------------------------------
    INIT
    --------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   initShared();
   initMobileNav();
   initHeaderScroll();
+  initCountdownTimers();
+  initDynamicUrgency();
+  initOfferBanner();
   initHomePage();
   initAboutPage();
   initFAQ();
   initContactForm();
+  initSocialProof();
+  initExitIntent();
+  initFloatingCta();
+  initFadeIn();
 });
