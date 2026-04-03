@@ -1,16 +1,20 @@
 "use strict";
 
+/* ================================================================
+   EAZY ITR — script.js
+   Form submissions → Formspree (free, no backend needed)
+   ⚠️  ONE THING TO CHANGE: Replace YOUR_FORM_ID below with your
+       8-character Formspree form ID (e.g. xpwzgkrd)
+   ================================================================ */
+
+const FORMSPREE_URL = 'https://formspree.io/f/xykbngzo';
+
 /* ------------------------------------------------------------------
    HELPER
    ------------------------------------------------------------------ */
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
-}
-
-function setHref(id, href, label) {
-  const el = document.getElementById(id);
-  if (el) { el.href = href; el.textContent = label || href.replace('mailto:', ''); }
 }
 
 /* ------------------------------------------------------------------
@@ -128,13 +132,10 @@ function initAboutPage() {
   setText('founderBio',   a.founderBio);
 
   const dp = document.getElementById('detailPhone');
-  if (dp) {
-    dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none;">${CONFIG.phone}</a>`;
-  }
+  if (dp) dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none;">${CONFIG.phone}</a>`;
+
   const de = document.getElementById('detailEmail');
-  if (de) {
-    de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none;">${CONFIG.email}</a>`;
-  }
+  if (de) de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none;">${CONFIG.email}</a>`;
 }
 
 /* ------------------------------------------------------------------
@@ -147,10 +148,10 @@ function initCountUp() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      const el = entry.target;
-      const target = parseInt(el.dataset.target, 10);
+      const el       = entry.target;
+      const target   = parseInt(el.dataset.target, 10);
       const duration = 1800;
-      const step = 16;
+      const step     = 16;
       const increment = target / (duration / step);
       let current = 0;
 
@@ -172,7 +173,7 @@ function initCountUp() {
 }
 
 /* ------------------------------------------------------------------
-   6. CONTACT FORM
+   6. CONTACT FORM → FORMSPREE
    ------------------------------------------------------------------ */
 function initContactForm() {
   const form    = document.getElementById('contactForm');
@@ -184,7 +185,7 @@ function initContactForm() {
       field: document.getElementById('fname'),
       errEl: document.getElementById('err-name'),
       validate(val) {
-        if (!val.trim()) return 'Please enter your full name.';
+        if (!val.trim())           return 'Please enter your full name.';
         if (val.trim().length < 2) return 'Name must be at least 2 characters.';
         return '';
       }
@@ -210,7 +211,7 @@ function initContactForm() {
       field: document.getElementById('fmessage'),
       errEl: document.getElementById('err-message'),
       validate(val) {
-        if (!val.trim()) return 'Please enter a message.';
+        if (!val.trim())            return 'Please enter a message.';
         if (val.trim().length < 10) return 'Message must be at least 10 characters.';
         return '';
       }
@@ -233,10 +234,10 @@ function initContactForm() {
     });
   });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    let hasErrors = false;
 
+    let hasErrors = false;
     Object.values(validators).forEach(({ field, errEl, validate }) => {
       if (!field) return;
       const err = validate(field.value);
@@ -244,18 +245,51 @@ function initContactForm() {
       field.classList.toggle('invalid', !!err);
       if (err) hasErrors = true;
     });
-
     if (hasErrors) return;
 
     const btn = form.querySelector('button[type="submit"]');
-    btn.textContent = 'Sending…';
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Sending…';
     btn.disabled = true;
 
-    setTimeout(() => {
-      form.style.display    = 'none';
-      success.classList.add('visible');
-      success.style.display = 'flex';
-    }, 900);
+    const payload = {
+      name:    validators.name.field.value.trim(),
+      email:   validators.email.field.value.trim(),
+      phone:   validators.phone.field.value.trim() || 'Not provided',
+      message: validators.message.field.value.trim()
+    };
+
+    try {
+      const res = await fetch(FORMSPREE_URL, {
+        method:  'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept':        'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+
+      if (res.ok) {
+        form.style.display    = 'none';
+        success.classList.add('visible');
+        success.style.display = 'flex';
+      } else {
+        throw new Error(result.error || 'Submission failed. Please try again.');
+      }
+
+    } catch (err) {
+      console.error('Form error:', err);
+      btn.textContent      = '❌ Error — Try Again';
+      btn.disabled         = false;
+      btn.style.background = '#b91c1c';
+      setTimeout(() => {
+        btn.textContent      = originalText;
+        btn.style.background = '';
+        btn.disabled         = false;
+      }, 4000);
+    }
   });
 }
 
