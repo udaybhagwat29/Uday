@@ -1,305 +1,346 @@
 "use strict";
-
 /* ================================================================
-   EAZY ITR — script.js
-   Form submissions → Formspree (free, no backend needed)
-   ⚠️  ONE THING TO CHANGE: Replace YOUR_FORM_ID below with your
-       8-character Formspree form ID (e.g. xpwzgkrd)
+   EAZY ITR — script.js (Conversion Redesign 2025)
+   Formspree endpoint — replace YOUR_ID with your actual form ID
    ================================================================ */
 
 const FORMSPREE_URL = 'https://formspree.io/f/xykbngzo';
 
-/* ------------------------------------------------------------------
-   HELPER
-   ------------------------------------------------------------------ */
-function setText(id, value) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = value;
-}
+/* ---------------------------------------------------------------
+   UTILS
+   --------------------------------------------------------------- */
+const $ = (id) => document.getElementById(id);
+const setText = (id, t) => { const el = $(id); if (el) el.textContent = t; };
+const setHTML = (id, h) => { const el = $(id); if (el) el.innerHTML = h; };
 
-/* ------------------------------------------------------------------
-   1. SHARED
-   ------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   1. SHARED — footer, etc.
+   --------------------------------------------------------------- */
 function initShared() {
-  setText('companyName', CONFIG.companyName);
-
-  const hp = document.getElementById('headerPhone');
-  if (hp) { hp.href = `tel:${CONFIG.phone}`; hp.innerHTML = `<span class="hc-icon">📞</span>${CONFIG.phone}`; }
-
-  const he = document.getElementById('headerEmail');
-  if (he) { he.href = `mailto:${CONFIG.email}`; he.innerHTML = `<span class="hc-icon">✉</span>${CONFIG.email}`; }
-
-  setText('footerName', `© ${new Date().getFullYear()} ${CONFIG.companyName}`);
-
-  const fp = document.getElementById('footerPhone');
-  if (fp) { fp.href = `tel:${CONFIG.phone}`; fp.innerHTML = `📞 ${CONFIG.phone}`; }
-
-  const fe = document.getElementById('footerEmail');
-  if (fe) { fe.href = `mailto:${CONFIG.email}`; fe.innerHTML = `✉ ${CONFIG.email}`; }
+  if (typeof CONFIG === 'undefined') return;
+  const year = new Date().getFullYear();
+  setText('footerName', `© ${year} ${CONFIG.companyName}. All rights reserved.`);
 }
 
-/* ------------------------------------------------------------------
+/* ---------------------------------------------------------------
    2. MOBILE NAV
-   ------------------------------------------------------------------ */
+   --------------------------------------------------------------- */
 function initMobileNav() {
-  const hamburger = document.getElementById('hamburger');
-  const overlay   = document.getElementById('mobileNavOverlay');
-  const closeBtn  = document.getElementById('mobileNavClose');
+  const hamburger = $('hamburger');
+  const overlay   = $('mobileNavOverlay');
+  const closeBtn  = $('mobileNavClose');
   if (!hamburger || !overlay) return;
 
-  hamburger.addEventListener('click', () => {
-    overlay.classList.add('active');
-    document.body.style.overflow = 'hidden';
-  });
+  const open = () => { overlay.classList.add('active'); document.body.style.overflow = 'hidden'; hamburger.setAttribute('aria-expanded','true'); };
+  const close = () => { overlay.classList.remove('active'); document.body.style.overflow = ''; hamburger.setAttribute('aria-expanded','false'); };
 
-  function closeNav() {
-    overlay.classList.remove('active');
-    document.body.style.overflow = '';
-  }
-
-  if (closeBtn) closeBtn.addEventListener('click', closeNav);
-  overlay.addEventListener('click', (e) => {
-    if (e.target === overlay) closeNav();
-  });
+  hamburger.addEventListener('click', open);
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', e => { if (e.target === overlay) close(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && overlay.classList.contains('active')) close(); });
 }
 
-/* ------------------------------------------------------------------
-   3. HOME PAGE
-   ------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   3. HEADER SCROLL
+   --------------------------------------------------------------- */
+function initHeaderScroll() {
+  const h = $('siteHeader');
+  if (!h) return;
+  window.addEventListener('scroll', () => {
+    h.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+}
+
+/* ---------------------------------------------------------------
+   4. HOME PAGE — service cards (top 6 visible, rest hidden)
+   --------------------------------------------------------------- */
 function initHomePage() {
-  const grid = document.getElementById('servicesGrid');
-  if (!grid) return;
+  const grid      = $('servicesGrid');
+  const extraGrid = $('servicesExtraGrid');
+  const extraWrap = $('servicesExtra');
+  const showBtn   = $('showMoreBtn');
+  if (!grid || !CONFIG.services) return;
 
-  setText('heroTagline', CONFIG.tagline);
+  const TOP = 6;
 
-  CONFIG.services.forEach((svc) => {
+  CONFIG.services.forEach((svc, i) => {
     const card = document.createElement('article');
-    card.className = 'service-card';
+    card.className = 'service-card fade-in';
     card.setAttribute('role', 'listitem');
-    card.setAttribute('aria-label', svc.title);
 
+    const benefits = (svc.benefits || []).map(b => `<li>✔ ${b}</li>`).join('');
     card.innerHTML = `
+      <div class="svc-icon">${svc.icon || '📄'}</div>
       <span class="badge-fast">⚡ 24–48 Hours</span>
       <h2 class="card-title">${svc.title}</h2>
-      <p class="card-desc">${svc.description}</p>
-      <ul class="card-benefits">
-        <li>✔ Fast Processing</li>
-        <li>✔ CA Verified</li>
-        <li>✔ 100% Secure</li>
-      </ul>
+      <p class="card-desc">${svc.desc || svc.description || ''}</p>
+      <ul class="card-benefits">${benefits}</ul>
       <div class="card-footer">
         <span class="card-price">${svc.price}</span>
-        <a href="about.html#contact" class="btn-primary" aria-label="Pay Now for ${svc.title}">Pay Now →</a>
-      </div>
-    `;
+        <a href="about.html#contact" class="btn-primary">Pay Now →</a>
+      </div>`;
 
-    grid.appendChild(card);
+    if (i < TOP) {
+      grid.appendChild(card);
+    } else if (extraGrid) {
+      extraGrid.appendChild(card);
+    }
   });
 
+  // Show more toggle
+  if (showBtn && extraWrap && CONFIG.services.length > TOP) {
+    showBtn.addEventListener('click', () => {
+      const open = showBtn.getAttribute('aria-expanded') === 'true';
+      if (open) {
+        extraWrap.style.display = 'none';
+        showBtn.textContent = `View All ${CONFIG.services.length} Services ▼`;
+        showBtn.setAttribute('aria-expanded', 'false');
+      } else {
+        extraWrap.style.display = 'block';
+        showBtn.textContent = 'Show Less ▲';
+        showBtn.setAttribute('aria-expanded', 'true');
+        initFadeIn();
+      }
+    });
+  } else if (showBtn) {
+    showBtn.style.display = 'none';
+  }
+
   initCountUp();
+  initFadeIn();
 }
 
-/* ------------------------------------------------------------------
-   4. ABOUT PAGE
-   ------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   5. ABOUT PAGE — stats, founder, contact
+   --------------------------------------------------------------- */
 function initAboutPage() {
-  const a = CONFIG.about;
+  const a = CONFIG?.about;
   if (!a) return;
 
   setText('overviewTitle', a.overviewTitle);
 
+  // Stats
   [
     { id: 'stat1', data: a.stat1 },
     { id: 'stat2', data: a.stat2 },
     { id: 'stat3', data: a.stat3 }
   ].forEach(({ id, data }) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.innerHTML = `
-        <span class="stat-value">${data.value}</span>
-        <span class="stat-label">${data.label}</span>
-      `;
-    }
+    if (!data) return;
+    setHTML(id, `<span class="stat-val">${data.value}</span><span class="stat-lbl">${data.label}</span>`);
   });
 
-  setText('overviewText', a.overviewText);
-  setText('missionText',  a.missionText);
+  // Overview — split into 2 paragraphs
+  const ovEl = $('overviewText');
+  if (ovEl) {
+    const sentences = a.overviewText.split('. ');
+    const mid = Math.ceil(sentences.length / 2);
+    const p1 = sentences.slice(0, mid).join('. ').trim();
+    const p2 = sentences.slice(mid).join('. ').trim();
+    ovEl.innerHTML = `<p>${p1}${p1.endsWith('.') ? '' : '.'}</p>${p2 ? `<p>${p2}${p2.endsWith('.') ? '' : '.'}</p>` : ''}`;
+  }
 
+  setText('missionText', a.missionText);
+
+  // Founder
   const initials = a.founderName.split(' ').map(n => n[0]).join('');
   setText('founderInitial', initials);
-  setText('founderName',  a.founderName);
-  setText('founderTitle', a.founderTitle);
-  setText('founderBio',   a.founderBio);
+  setText('founderName',    a.founderName);
+  setText('founderTitle',   a.founderTitle);
 
-  const dp = document.getElementById('detailPhone');
-  if (dp) dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none;">${CONFIG.phone}</a>`;
+  // Multi-paragraph bio
+  const bioEl = $('founderBio');
+  if (bioEl) {
+    const paras = a.founderBio.split('. ');
+    const chunk = Math.ceil(paras.length / 3);
+    let html = '';
+    for (let i = 0; i < paras.length; i += chunk) {
+      const seg = paras.slice(i, i + chunk).join('. ').trim();
+      if (seg) html += `<p>${seg}${seg.endsWith('.') ? '' : '.'}</p>`;
+    }
+    bioEl.innerHTML = html;
+  }
 
-  const de = document.getElementById('detailEmail');
-  if (de) de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none;">${CONFIG.email}</a>`;
+  const dp = $('detailPhone');
+  if (dp) dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none">${CONFIG.phone}</a>`;
+
+  const de = $('detailEmail');
+  if (de) de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none">${CONFIG.email}</a>`;
+
+  initFadeIn();
 }
 
-/* ------------------------------------------------------------------
-   5. COUNT-UP ANIMATION
-   ------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   6. COUNT-UP ANIMATION
+   --------------------------------------------------------------- */
 function initCountUp() {
-  const els = document.querySelectorAll('.trust-number[data-target]');
+  const els = document.querySelectorAll('[data-target]');
   if (!els.length) return;
 
-  const observer = new IntersectionObserver((entries) => {
+  const obs = new IntersectionObserver(entries => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      const el       = entry.target;
-      const target   = parseInt(el.dataset.target, 10);
-      const duration = 1800;
-      const step     = 16;
-      const increment = target / (duration / step);
-      let current = 0;
-
+      const el = entry.target;
+      const target = parseInt(el.dataset.target, 10);
+      const dur = 1800, interval = 16;
+      const inc = target / (dur / interval);
+      let cur = 0;
       const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) {
-          el.textContent = target.toLocaleString('en-IN');
-          clearInterval(timer);
-        } else {
-          el.textContent = Math.floor(current).toLocaleString('en-IN');
-        }
-      }, step);
-
-      observer.unobserve(el);
+        cur += inc;
+        if (cur >= target) { el.textContent = target.toLocaleString('en-IN'); clearInterval(timer); }
+        else el.textContent = Math.floor(cur).toLocaleString('en-IN');
+      }, interval);
+      obs.unobserve(el);
     });
   }, { threshold: 0.4 });
 
-  els.forEach(el => observer.observe(el));
+  els.forEach(el => obs.observe(el));
 }
 
-/* ------------------------------------------------------------------
-   6. CONTACT FORM → FORMSPREE
-   ------------------------------------------------------------------ */
+/* ---------------------------------------------------------------
+   7. FADE-IN ON SCROLL
+   --------------------------------------------------------------- */
+function initFadeIn() {
+  const els = document.querySelectorAll('.fade-in:not(.visible)');
+  if (!els.length) return;
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (!entry.isIntersecting) return;
+      setTimeout(() => entry.target.classList.add('visible'), i * 55);
+      obs.unobserve(entry.target);
+    });
+  }, { threshold: 0.08 });
+
+  els.forEach(el => obs.observe(el));
+}
+
+/* ---------------------------------------------------------------
+   8. FAQ ACCORDION
+   --------------------------------------------------------------- */
+function initFAQ() {
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const btn = item.querySelector('.faq-q');
+    const ans = item.querySelector('.faq-a');
+    if (!btn || !ans) return;
+
+    btn.addEventListener('click', () => {
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      // Close all
+      document.querySelectorAll('.faq-q').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        const a = b.closest('.faq-item')?.querySelector('.faq-a');
+        if (a) a.hidden = true;
+      });
+      if (!isOpen) {
+        btn.setAttribute('aria-expanded', 'true');
+        ans.hidden = false;
+      }
+    });
+  });
+}
+
+/* ---------------------------------------------------------------
+   9. CONTACT FORM → FORMSPREE
+   --------------------------------------------------------------- */
 function initContactForm() {
-  const form    = document.getElementById('contactForm');
-  const success = document.getElementById('formSuccess');
+  const form    = $('contactForm');
+  const success = $('formSuccess');
   if (!form) return;
 
-  const validators = {
+  const fields = {
     name: {
-      field: document.getElementById('fname'),
-      errEl: document.getElementById('err-name'),
-      validate(val) {
-        if (!val.trim())           return 'Please enter your full name.';
-        if (val.trim().length < 2) return 'Name must be at least 2 characters.';
-        return '';
-      }
+      el: $('fname'), err: $('err-name'),
+      validate: v => !v.trim() ? 'Please enter your full name.' : v.trim().length < 2 ? 'Name too short.' : ''
     },
     email: {
-      field: document.getElementById('femail'),
-      errEl: document.getElementById('err-email'),
-      validate(val) {
-        if (!val.trim()) return 'Please enter your email address.';
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) return 'Please enter a valid email address.';
-        return '';
-      }
+      el: $('femail'), err: $('err-email'),
+      validate: v => !v.trim() ? 'Please enter your email.' : !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? 'Enter a valid email.' : ''
     },
     phone: {
-      field: document.getElementById('fphone'),
-      errEl: document.getElementById('err-phone'),
-      validate(val) {
-        if (val.trim() && !/^[\d\s\+\-\(\)]{7,20}$/.test(val)) return 'Please enter a valid phone number.';
-        return '';
-      }
+      el: $('fphone'), err: $('err-phone'),
+      validate: v => v.trim() && !/^[\d\s+\-()]{7,20}$/.test(v) ? 'Enter a valid phone number.' : ''
     },
     message: {
-      field: document.getElementById('fmessage'),
-      errEl: document.getElementById('err-message'),
-      validate(val) {
-        if (!val.trim())            return 'Please enter a message.';
-        if (val.trim().length < 10) return 'Message must be at least 10 characters.';
-        return '';
-      }
+      el: $('fmessage'), err: $('err-message'),
+      validate: v => !v.trim() ? 'Please enter a message.' : v.trim().length < 10 ? 'Message too short.' : ''
     }
   };
 
-  Object.values(validators).forEach(({ field, errEl, validate }) => {
-    if (!field) return;
-    field.addEventListener('blur', () => {
-      const err = validate(field.value);
-      errEl.textContent = err;
-      field.classList.toggle('invalid', !!err);
+  // Live validation on blur/input
+  Object.values(fields).forEach(({ el, err, validate }) => {
+    if (!el) return;
+    el.addEventListener('blur', () => {
+      const e = validate(el.value);
+      if (err) err.textContent = e;
+      el.classList.toggle('invalid', !!e);
     });
-    field.addEventListener('input', () => {
-      if (field.classList.contains('invalid')) {
-        const err = validate(field.value);
-        errEl.textContent = err;
-        field.classList.toggle('invalid', !!err);
-      }
+    el.addEventListener('input', () => {
+      if (!el.classList.contains('invalid')) return;
+      const e = validate(el.value);
+      if (err) err.textContent = e;
+      el.classList.toggle('invalid', !!e);
     });
   });
 
-  form.addEventListener('submit', async (e) => {
+  form.addEventListener('submit', async e => {
     e.preventDefault();
 
-    let hasErrors = false;
-    Object.values(validators).forEach(({ field, errEl, validate }) => {
-      if (!field) return;
-      const err = validate(field.value);
-      errEl.textContent = err;
-      field.classList.toggle('invalid', !!err);
-      if (err) hasErrors = true;
+    let hasErr = false;
+    Object.values(fields).forEach(({ el, err, validate }) => {
+      if (!el) return;
+      const msg = validate(el.value);
+      if (err) err.textContent = msg;
+      el.classList.toggle('invalid', !!msg);
+      if (msg) hasErr = true;
     });
-    if (hasErrors) return;
+    if (hasErr) return;
 
     const btn = form.querySelector('button[type="submit"]');
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Sending…';
+    const orig = btn.innerHTML;
+    btn.innerHTML = '⏳ Sending…';
     btn.disabled = true;
 
     const payload = {
-      name:    validators.name.field.value.trim(),
-      email:   validators.email.field.value.trim(),
-      phone:   validators.phone.field.value.trim() || 'Not provided',
-      message: validators.message.field.value.trim()
+      name:    fields.name.el.value.trim(),
+      email:   fields.email.el.value.trim(),
+      phone:   fields.phone.el?.value.trim() || 'Not provided',
+      service: $('fservice')?.value || 'Not specified',
+      message: fields.message.el.value.trim()
     };
 
     try {
-      const res = await fetch(FORMSPREE_URL, {
-        method:  'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept':        'application/json'
-        },
+      const res    = await fetch(FORMSPREE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify(payload)
       });
-
       const result = await res.json();
 
       if (res.ok) {
-        form.style.display    = 'none';
-        success.classList.add('visible');
-        success.style.display = 'flex';
+        form.style.display = 'none';
+        if (success) { success.classList.add('visible'); success.style.display = 'flex'; }
       } else {
-        throw new Error(result.error || 'Submission failed. Please try again.');
+        throw new Error(result.error || 'Submission failed.');
       }
-
     } catch (err) {
-      console.error('Form error:', err);
-      btn.textContent      = '❌ Error — Try Again';
+      console.error(err);
+      btn.innerHTML        = '❌ Error — Try again';
       btn.disabled         = false;
       btn.style.background = '#b91c1c';
-      setTimeout(() => {
-        btn.textContent      = originalText;
-        btn.style.background = '';
-        btn.disabled         = false;
-      }, 4000);
+      setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; btn.disabled = false; }, 4000);
     }
   });
 }
 
-/* ------------------------------------------------------------------
+/* ---------------------------------------------------------------
    INIT
-   ------------------------------------------------------------------ */
+   --------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
   initShared();
   initMobileNav();
+  initHeaderScroll();
   initHomePage();
   initAboutPage();
+  initFAQ();
   initContactForm();
 });
