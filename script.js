@@ -1,79 +1,109 @@
-/**
- * script.js — Apex Advisory
- * Handles:
- *  1. Injecting CONFIG values into both pages
- *  2. Rendering service cards (index.html)
- *  3. Rendering about/founder content (about.html)
- *  4. Contact form validation & simulated submission
- */
-
 "use strict";
 
 /* ------------------------------------------------------------------
-   HELPER: Safely set text content of an element by id
+   HELPER
    ------------------------------------------------------------------ */
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
 }
 
-function setHref(id, href) {
+function setHref(id, href, label) {
   const el = document.getElementById(id);
-  if (el) { el.href = href; el.textContent = href.replace('mailto:', ''); }
+  if (el) { el.href = href; el.textContent = label || href.replace('mailto:', ''); }
 }
 
 /* ------------------------------------------------------------------
-   1. SHARED — Populate header, footer on BOTH pages
+   1. SHARED
    ------------------------------------------------------------------ */
 function initShared() {
   setText('companyName', CONFIG.companyName);
 
-  // Footer
+  const hp = document.getElementById('headerPhone');
+  if (hp) { hp.href = `tel:${CONFIG.phone}`; hp.innerHTML = `<span class="hc-icon">📞</span>${CONFIG.phone}`; }
+
+  const he = document.getElementById('headerEmail');
+  if (he) { he.href = `mailto:${CONFIG.email}`; he.innerHTML = `<span class="hc-icon">✉</span>${CONFIG.email}`; }
+
   setText('footerName', `© ${new Date().getFullYear()} ${CONFIG.companyName}`);
-  setHref('footerEmail', `mailto:${CONFIG.email}`);
-  setText('footerPhone', CONFIG.phone);
+
+  const fp = document.getElementById('footerPhone');
+  if (fp) { fp.href = `tel:${CONFIG.phone}`; fp.innerHTML = `📞 ${CONFIG.phone}`; }
+
+  const fe = document.getElementById('footerEmail');
+  if (fe) { fe.href = `mailto:${CONFIG.email}`; fe.innerHTML = `✉ ${CONFIG.email}`; }
 }
 
 /* ------------------------------------------------------------------
-   2. HOME PAGE — Build the 3×3 services grid
+   2. MOBILE NAV
    ------------------------------------------------------------------ */
-function initHomePage() {
-  const grid = document.getElementById('servicesGrid');
-  if (!grid) return; // not on home page
+function initMobileNav() {
+  const hamburger = document.getElementById('hamburger');
+  const overlay   = document.getElementById('mobileNavOverlay');
+  const closeBtn  = document.getElementById('mobileNavClose');
+  if (!hamburger || !overlay) return;
 
-  // Hero tagline
-  setText('heroTagline', CONFIG.tagline);
+  hamburger.addEventListener('click', () => {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
 
-  CONFIG.services.forEach((svc, i) => {
-    const num  = String(i + 1).padStart(2, '0');
-    const card = document.createElement('article');
-    card.className = 'service-card';
-    card.setAttribute('role', 'region');
-    card.setAttribute('aria-label', svc.title);
+  function closeNav() {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
 
-    card.innerHTML = `
-      <span class="card-number">${num}</span>
-      <h2 class="card-title">${svc.title}</h2>
-      <p class="card-desc">${svc.description}</p>
-      <span class="card-price">${svc.price}</span>
-      <a href="about.html#contact" class="btn-primary">Get Started →</a>
-    `;
-
-    grid.appendChild(card);
+  if (closeBtn) closeBtn.addEventListener('click', closeNav);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeNav();
   });
 }
 
 /* ------------------------------------------------------------------
-   3. ABOUT PAGE — Populate stats, founder, contact details
+   3. HOME PAGE
+   ------------------------------------------------------------------ */
+function initHomePage() {
+  const grid = document.getElementById('servicesGrid');
+  if (!grid) return;
+
+  setText('heroTagline', CONFIG.tagline);
+
+  CONFIG.services.forEach((svc) => {
+    const card = document.createElement('article');
+    card.className = 'service-card';
+    card.setAttribute('role', 'listitem');
+    card.setAttribute('aria-label', svc.title);
+
+    card.innerHTML = `
+      <span class="badge-fast">⚡ 24–48 Hours</span>
+      <h2 class="card-title">${svc.title}</h2>
+      <p class="card-desc">${svc.description}</p>
+      <ul class="card-benefits">
+        <li>✔ Fast Processing</li>
+        <li>✔ CA Verified</li>
+        <li>✔ 100% Secure</li>
+      </ul>
+      <div class="card-footer">
+        <span class="card-price">${svc.price}</span>
+        <a href="about.html#contact" class="btn-primary" aria-label="Pay Now for ${svc.title}">Pay Now →</a>
+      </div>
+    `;
+
+    grid.appendChild(card);
+  });
+
+  initCountUp();
+}
+
+/* ------------------------------------------------------------------
+   4. ABOUT PAGE
    ------------------------------------------------------------------ */
 function initAboutPage() {
   const a = CONFIG.about;
-  if (!a) return; // not on about page
+  if (!a) return;
 
-  // Hero
   setText('overviewTitle', a.overviewTitle);
 
-  // Stats
   [
     { id: 'stat1', data: a.stat1 },
     { id: 'stat2', data: a.stat2 },
@@ -88,35 +118,67 @@ function initAboutPage() {
     }
   });
 
-  // Overview + Mission text
   setText('overviewText', a.overviewText);
   setText('missionText',  a.missionText);
 
-  // Founder
-  const initials = a.founderName
-    .split(' ')
-    .map(n => n[0])
-    .join('');
+  const initials = a.founderName.split(' ').map(n => n[0]).join('');
   setText('founderInitial', initials);
   setText('founderName',  a.founderName);
   setText('founderTitle', a.founderTitle);
   setText('founderBio',   a.founderBio);
 
-  // Contact detail items
-  setText('detailPhone',   CONFIG.phone);
-  setText('detailEmail',   CONFIG.email);
-  setText('detailAddress', CONFIG.address);
+  const dp = document.getElementById('detailPhone');
+  if (dp) {
+    dp.innerHTML = `<a href="tel:${CONFIG.phone}" style="color:inherit;text-decoration:none;">${CONFIG.phone}</a>`;
+  }
+  const de = document.getElementById('detailEmail');
+  if (de) {
+    de.innerHTML = `<a href="mailto:${CONFIG.email}" style="color:inherit;text-decoration:none;">${CONFIG.email}</a>`;
+  }
 }
 
 /* ------------------------------------------------------------------
-   4. CONTACT FORM — Validation & simulated submission
+   5. COUNT-UP ANIMATION
+   ------------------------------------------------------------------ */
+function initCountUp() {
+  const els = document.querySelectorAll('.trust-number[data-target]');
+  if (!els.length) return;
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const el = entry.target;
+      const target = parseInt(el.dataset.target, 10);
+      const duration = 1800;
+      const step = 16;
+      const increment = target / (duration / step);
+      let current = 0;
+
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          el.textContent = target.toLocaleString('en-IN');
+          clearInterval(timer);
+        } else {
+          el.textContent = Math.floor(current).toLocaleString('en-IN');
+        }
+      }, step);
+
+      observer.unobserve(el);
+    });
+  }, { threshold: 0.4 });
+
+  els.forEach(el => observer.observe(el));
+}
+
+/* ------------------------------------------------------------------
+   6. CONTACT FORM
    ------------------------------------------------------------------ */
 function initContactForm() {
   const form    = document.getElementById('contactForm');
   const success = document.getElementById('formSuccess');
   if (!form) return;
 
-  /* ---- Validators ---- */
   const validators = {
     name: {
       field: document.getElementById('fname'),
@@ -140,10 +202,8 @@ function initContactForm() {
       field: document.getElementById('fphone'),
       errEl: document.getElementById('err-phone'),
       validate(val) {
-        if (val.trim() && !/^[\d\s\+\-\(\)]{7,20}$/.test(val)) {
-          return 'Please enter a valid phone number.';
-        }
-        return ''; // optional field — empty is fine
+        if (val.trim() && !/^[\d\s\+\-\(\)]{7,20}$/.test(val)) return 'Please enter a valid phone number.';
+        return '';
       }
     },
     message: {
@@ -157,7 +217,6 @@ function initContactForm() {
     }
   };
 
-  /* ---- Live validation on blur ---- */
   Object.values(validators).forEach(({ field, errEl, validate }) => {
     if (!field) return;
     field.addEventListener('blur', () => {
@@ -165,7 +224,6 @@ function initContactForm() {
       errEl.textContent = err;
       field.classList.toggle('invalid', !!err);
     });
-    // Clear error on input
     field.addEventListener('input', () => {
       if (field.classList.contains('invalid')) {
         const err = validate(field.value);
@@ -175,10 +233,8 @@ function initContactForm() {
     });
   });
 
-  /* ---- Submit handler ---- */
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-
     let hasErrors = false;
 
     Object.values(validators).forEach(({ field, errEl, validate }) => {
@@ -191,25 +247,24 @@ function initContactForm() {
 
     if (hasErrors) return;
 
-    // Simulate async submission
     const btn = form.querySelector('button[type="submit"]');
     btn.textContent = 'Sending…';
-    btn.disabled    = true;
+    btn.disabled = true;
 
     setTimeout(() => {
-      // Hide form, show success message
-      form.style.display      = 'none';
+      form.style.display    = 'none';
       success.classList.add('visible');
-      success.style.display   = 'flex';
-    }, 900); // 900ms simulated delay
+      success.style.display = 'flex';
+    }, 900);
   });
 }
 
 /* ------------------------------------------------------------------
-   5. INITIALISE on DOMContentLoaded
+   INIT
    ------------------------------------------------------------------ */
 document.addEventListener('DOMContentLoaded', () => {
   initShared();
+  initMobileNav();
   initHomePage();
   initAboutPage();
   initContactForm();

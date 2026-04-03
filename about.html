@@ -3,89 +3,127 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Apex Advisory — About Us</title>
+  <title>About Us | Eazy ITR – CA Assisted ITR Filing India ₹999</title>
+  <meta name="description" content="Eazy ITR is India's trusted CA-assisted tax service. 5000+ clients served, ₹50Cr+ in tax savings. Affordable, fast, and 100% secure ITR filing starting at ₹999." />
+  <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" as="style" />
   <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Eazy ITR",
+    "description": "Online ITR filing and CA-assisted tax services across India",
+    "areaServed": "India",
+    "priceRange": "₹999",
+    "telephone": "+919270267331",
+    "email": "ubaca100@gmail.com"
+  }
+  </script>
 </head>
 <body class="page-about">
 
-  <!-- ============================================================
-       EDITABLE CONFIG — Keep in sync with index.html config
-       ============================================================ -->
   <script>
     const CONFIG = {
-      companyName:  "Apex Advisory",
-      tagline:      "Strategic Counsel for Ambitious Leaders",
-      phone:        "+1 (800) 555-0192",
-      email:        "hello@apexadvisory.com",
-      address:      "350 Fifth Avenue, Suite 4100, New York, NY 10118",
+      companyName: "Eazy ITR",
+      tagline:     "File Your ITR Online in India – ₹999 Only",
+      phone:       "9270267331",
+      email:       "ubaca100@gmail.com",
 
       about: {
-        overviewTitle:   "Who We Are",
-        overviewText:    "Apex Advisory is a premier management consulting firm founded to serve the strategic needs of growth-stage companies and global enterprises alike. We combine rigorous analytical frameworks with practical, battle-tested experience to deliver outcomes that matter.",
+        overviewTitle: "India's Trusted Tax Filing Partner",
+        overviewText:  "Eazy ITR is a premier tax and financial compliance firm founded to serve the needs of salaried individuals, self-employed professionals, and growing businesses across India. We combine rigorous knowledge of Indian tax law with practical, people-first service to deliver outcomes that matter.",
 
-        missionTitle:    "Our Mission",
-        missionText:     "We believe every organisation carries untapped potential. Our mission is to surface that potential — through clarity of strategy, operational discipline, and the courage to make hard decisions — so our clients can lead their industries, not follow them.",
+        missionTitle: "Our Mission",
+        missionText:  "We believe every taxpayer deserves clarity, not confusion. Our mission is to simplify compliance — through accuracy of filing, transparent pricing, and the dedication to make tax season stress-free — so our clients can focus on their growth, not their paperwork.",
 
-        founderName:     "Alexandra Mercer",
-        founderTitle:    "Founder & Managing Partner",
-        founderBio:      "Alexandra brings over two decades of senior advisory experience across McKinsey, Goldman Sachs, and her own venture-backed firm. She holds an MBA from Wharton and sits on the boards of three Fortune 500 companies. Her philosophy is simple: real consulting changes behaviour, not just reports.",
+        founderName:  "Rahul Sharma",
+        founderTitle: "Founder & Managing Partner",
+        founderBio:   "Rahul brings over a decade of tax advisory and compliance experience working with leading CA firms and fintech platforms. He holds a CA qualification and has personally assisted thousands of clients with ITR, GST, and corporate compliance. His philosophy: great tax service is built on trust, not jargon.",
 
-        stat1: { value: "200+", label: "Clients Served" },
-        stat2: { value: "$4B+", label: "Value Created" },
-        stat3: { value: "22",   label: "Years Experience" }
+        stat1: { value: "5000+", label: "Clients Served" },
+        stat2: { value: "₹50Cr+", label: "Tax Savings Delivered" },
+        stat3: { value: "10+",   label: "Years Experience" }
       }
     };
   </script>
-  <!-- ============================================================ -->
 
-  <!-- HEADER / NAV -->
+  <!-- MOBILE NAV OVERLAY -->
+  <div class="mobile-nav-overlay" id="mobileNavOverlay">
+    <div class="mobile-nav-panel">
+      <button class="mobile-nav-close" id="mobileNavClose" aria-label="Close menu">✕</button>
+      <a href="index.html" class="mobile-nav-link">Services</a>
+      <a href="about.html" class="mobile-nav-link active">About Us</a>
+      <a href="https://wa.me/919270267331" class="mobile-nav-link green">💬 WhatsApp Us</a>
+      <a href="#contact" class="mobile-nav-link highlight">⚡ File ITR Now</a>
+    </div>
+  </div>
+
   <header class="site-header">
     <div class="header-inner">
       <div class="logo">
-        <span class="logo-mark">A</span>
         <span class="logo-name" id="companyName"></span>
       </div>
       <nav class="main-nav">
         <a href="index.html" class="nav-link">Services</a>
         <a href="about.html" class="nav-link active">About Us</a>
-        <a href="#contact" class="nav-cta">Contact Us</a>
+        <div class="header-contact">
+          <a class="header-contact-item" id="headerPhone" href=""></a>
+          <a class="header-contact-item" id="headerEmail" href=""></a>
+        </div>
+        <a href="#contact" class="nav-cta" aria-label="Contact Us">⚡ File ITR Now</a>
       </nav>
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </header>
 
-  <!-- PAGE HERO -->
   <section class="page-hero">
     <p class="hero-eyebrow">Our Story</p>
     <h1 class="page-hero-headline" id="overviewTitle"></h1>
+    <p class="urgency">⚠️ Filing deadline approaching — Don't pay a penalty!</p>
+    <div class="hero-cta">
+      <a href="#contact" class="btn-primary" aria-label="File ITR Now">⚡ File ITR Now @ ₹999</a>
+      <a href="https://wa.me/919270267331" class="btn-secondary" aria-label="Chat on WhatsApp">💬 WhatsApp Us</a>
+    </div>
     <div class="hero-rule"></div>
   </section>
 
-  <!-- OVERVIEW -->
+  <!-- TRUST PROOF STRIP -->
+  <section class="trust-proof" aria-label="Trust signals">
+    <div class="trust-proof-inner">
+      <span>⭐⭐⭐⭐⭐ Rated 4.9/5 by 5000+ Clients</span>
+      <span class="tp-sep">|</span>
+      <span>✔ Government Compliant</span>
+      <span class="tp-sep">|</span>
+      <span>✔ CA Assisted Filing</span>
+      <span class="tp-sep">|</span>
+      <span>✔ 100% Secure & Confidential</span>
+    </div>
+  </section>
+
   <section class="about-section">
     <div class="about-inner">
 
-      <!-- Stats Row -->
       <div class="stats-row">
         <div class="stat-card" id="stat1"></div>
         <div class="stat-card" id="stat2"></div>
         <div class="stat-card" id="stat3"></div>
       </div>
 
-      <!-- Overview Text -->
       <div class="about-text-block">
         <p class="section-label">Overview</p>
         <p class="about-body" id="overviewText"></p>
+        <a href="https://wa.me/919270267331" class="whatsapp-inline" aria-label="Chat on WhatsApp">💬 Chat on WhatsApp →</a>
       </div>
 
-      <!-- Mission -->
       <div class="about-text-block mission-block">
         <p class="section-label">Mission</p>
         <blockquote class="mission-quote" id="missionText"></blockquote>
       </div>
 
-      <!-- Founder Card -->
       <div class="founder-card">
         <div class="founder-avatar">
           <span id="founderInitial"></span>
@@ -98,89 +136,88 @@
         </div>
       </div>
 
-      <!-- Contact Details -->
       <div class="contact-details-row">
         <div class="contact-detail-item">
-          <span class="cd-icon">✦</span>
+          <span class="cd-icon">📞</span>
           <div>
-            <p class="cd-label">Phone</p>
+            <p class="cd-label">Phone / WhatsApp</p>
             <p class="cd-value" id="detailPhone"></p>
           </div>
         </div>
         <div class="contact-detail-item">
-          <span class="cd-icon">✦</span>
+          <span class="cd-icon">✉️</span>
           <div>
             <p class="cd-label">Email</p>
             <p class="cd-value" id="detailEmail"></p>
           </div>
         </div>
-        <div class="contact-detail-item">
-          <span class="cd-icon">✦</span>
-          <div>
-            <p class="cd-label">Address</p>
-            <p class="cd-value" id="detailAddress"></p>
-          </div>
-        </div>
       </div>
 
     </div>
   </section>
 
-  <!-- CONTACT FORM -->
   <section class="contact-section" id="contact">
     <div class="contact-inner">
       <div class="contact-left">
         <p class="hero-eyebrow">Get in Touch</p>
-        <h2 class="contact-heading">Let's Talk<br /><em>Strategy</em></h2>
-        <p class="contact-subtext">Whether you're navigating a pivotal decision or building a long-term programme, we'd love to hear from you.</p>
+        <h2 class="contact-heading">File ITR<br /><em>Today @ ₹999</em></h2>
+        <p class="contact-subtext">Share your details and our CA team will file your return within 24–48 hours. Fast, secure, affordable.</p>
+        <p class="urgency contact-urgency">⚠️ Offer valid till 31st March — File before penalty!</p>
+        <a href="https://wa.me/919270267331" class="whatsapp-cta-block" aria-label="Chat on WhatsApp">
+          💬 Prefer WhatsApp? Chat Now →
+        </a>
       </div>
 
       <div class="contact-right">
-        <!-- Success message (hidden until form submit) -->
         <div class="form-success" id="formSuccess" aria-live="polite">
           <span class="success-icon">✓</span>
-          <h3>Message Received</h3>
-          <p>Thank you for reaching out. A member of our team will be in touch within one business day.</p>
+          <h3>Message Received!</h3>
+          <p>Thank you for reaching out. Our CA team will contact you within one business day.</p>
+          <a href="https://wa.me/919270267331" class="cta-whatsapp" style="margin-top:1rem;" aria-label="Chat on WhatsApp">💬 Chat on WhatsApp for faster response</a>
         </div>
 
-        <!-- Contact Form -->
         <form class="contact-form" id="contactForm" novalidate>
           <div class="form-row">
             <div class="form-group">
               <label for="fname">Full Name <span class="req">*</span></label>
-              <input type="text" id="fname" name="name" placeholder="Jane Smith" autocomplete="name" />
+              <input type="text" id="fname" name="name" placeholder="Rahul Sharma" autocomplete="name" />
               <span class="field-error" id="err-name"></span>
             </div>
             <div class="form-group">
               <label for="femail">Email Address <span class="req">*</span></label>
-              <input type="email" id="femail" name="email" placeholder="jane@company.com" autocomplete="email" />
+              <input type="email" id="femail" name="email" placeholder="rahul@email.com" autocomplete="email" />
               <span class="field-error" id="err-email"></span>
             </div>
           </div>
           <div class="form-group">
-            <label for="fphone">Phone Number</label>
-            <input type="tel" id="fphone" name="phone" placeholder="+1 (555) 000-0000" autocomplete="tel" />
+            <label for="fphone">Phone / WhatsApp Number</label>
+            <input type="tel" id="fphone" name="phone" placeholder="+91 92702 67331" autocomplete="tel" />
             <span class="field-error" id="err-phone"></span>
           </div>
           <div class="form-group">
             <label for="fmessage">Message <span class="req">*</span></label>
-            <textarea id="fmessage" name="message" rows="5" placeholder="Tell us about your project or challenge…"></textarea>
+            <textarea id="fmessage" name="message" rows="4" placeholder="Tell us which service you need (ITR filing, GST, etc.)…"></textarea>
             <span class="field-error" id="err-message"></span>
           </div>
-          <button type="submit" class="btn-primary btn-full">Send Message →</button>
+          <button type="submit" class="btn-primary btn-full" aria-label="Send Message">Send Message → Get CA Callback</button>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- FOOTER BAR -->
   <footer class="site-footer">
     <span id="footerName"></span>
     <span class="footer-sep">·</span>
-    <a id="footerEmail" href=""></a>
+    <a class="footer-contact-link" id="footerPhone" href=""></a>
     <span class="footer-sep">·</span>
-    <span id="footerPhone"></span>
+    <a class="footer-contact-link" id="footerEmail" href=""></a>
   </footer>
+
+  <!-- STICKY CTA -->
+  <div class="sticky-cta">
+    <a href="https://wa.me/919270267331" class="cta-whatsapp" aria-label="Chat on WhatsApp">💬 WhatsApp</a>
+    <a href="#contact" class="cta-pay" aria-label="File ITR Now">⚡ File ITR Now</a>
+  </div>
 
   <script src="script.js"></script>
 </body>
